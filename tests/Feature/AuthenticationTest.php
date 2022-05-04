@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
@@ -26,15 +27,7 @@ class AuthenticationTest extends TestCase
     {
         $this->json('POST', 'api/v1/admins', ['Accept' => 'application/json'])
             ->assertStatus(422)
-            ->assertJson([
-                "message" => "The given data was invalid.",
-                "errors" => [
-                    "first_name" => ["The first name field is required."],
-                    "last_name" => ["The last name field is required."],
-                    "email" => ["The email field is required."],
-                    "password" => ["The password field is required."],
-                ]
-            ]);
+            ->assertJsonValidationErrors(['first_name', 'last_name', 'email', 'password']);
     }
 
     public function testRepeatPassword()
@@ -47,12 +40,7 @@ class AuthenticationTest extends TestCase
 
         $this->json('POST', 'api/v1/admins', $userData, ['Accept' => 'application/json'])
             ->assertStatus(422)
-            ->assertJson([
-                "message" => "The given data was invalid.",
-                "errors" => [
-                    "password" => ["The password confirmation does not match."]
-                ]
-            ]);
+            ->assertJsonValidationErrors(['password']);
     }
 
     public function testSuccessfulAdminRegistration()
@@ -81,5 +69,39 @@ class AuthenticationTest extends TestCase
                     "updated_at"
                 ]
             ]);
+    }
+
+    public function testRequiredFieldsForAdminLogin()
+    {
+        $this->json("POST", 'api/v1/admins/login', ['Accept' => 'application/json'])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['email', 'password']);
+    }
+
+    public function testAdminLogin()
+    {
+        $user = User::factory()->create();
+
+        $credentials = ['email' => $user->email, 'password' => 'password'];
+//        dd($credentials);
+        $this->json("POST", "api/v1/admins/login", $credentials, ['Accept' => 'application/json'])
+                ->assertStatus(200)
+                ->assertJsonStructure([
+                    "status",
+                    "message",
+                    "data" => [
+                        "token",
+                        "user" => [
+                            "id",
+                            "uuid",
+                            "first_name",
+                            "last_name",
+                            "email",
+                            "email_verified_at",
+                            "created_at",
+                            "updated_at"
+                        ]
+                    ]
+                ]);
     }
 }

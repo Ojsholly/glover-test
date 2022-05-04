@@ -8,6 +8,7 @@ use App\Http\Resources\User\UserResource;
 use App\Services\Auth\AuthService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Throwable;
 
 class AuthController extends Controller
@@ -47,9 +48,9 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $user = $this->authService->validateCredentials($request->email, $request->role);
+        $user = $this->authService->validateCredentials($request->email);
 
-        if (!$user){
+        if (!$user || !Hash::check($request->password, $user->password)){
             return response()->error("The provided credentials are incorrect.");
         }
 

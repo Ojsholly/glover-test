@@ -17,10 +17,10 @@ class AuthService extends Service
         $this->userService = $userService;
     }
 
-    public function validateCredentials(string $email, string $role = "admin")
+    public function validateCredentials(string $email)
     {
         try {
-            $user = $this->userService->show(['email' => $email], $role);
+            $user = $this->userService->show(['email' => $email]);
         } catch(ModelNotFoundException | Throwable $exception){
             return null;
         }

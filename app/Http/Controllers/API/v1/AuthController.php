@@ -7,7 +7,9 @@ use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Resources\User\UserResource;
 use App\Services\Auth\AuthService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
 
@@ -16,7 +18,7 @@ class AuthController extends Controller
     /**
      * @var AuthService
      */
-    private $authService;
+    private AuthService $authService;
 
     public function __construct(AuthService $authService)
     {
@@ -46,7 +48,7 @@ class AuthController extends Controller
      * @param LoginRequest $request
      * @return mixed
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         $user = $this->authService->validateCredentials($request->email);
 
@@ -60,5 +62,16 @@ class AuthController extends Controller
         ];
 
         return response()->success($response, "Login Successful.");
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->success([], "Your account has been logged out successfully.");
     }
 }

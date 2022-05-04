@@ -26,7 +26,12 @@ Route::prefix('v1')->group(function (){
     Route::apiResource('admins', AdminController::class)->only('store');
 
     Route::prefix('admins')->group(function (){
-        Route::post('login', [AuthController::class, 'login']);
+
+        Route::controller(AuthController::class)->group(function (){
+
+            Route::post('login', 'login');
+            Route::post('logout', 'logout')->middleware('auth:sanctum');
+        });
     });
 
 

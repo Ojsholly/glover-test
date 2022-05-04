@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -102,6 +103,22 @@ class AuthenticationTest extends TestCase
                             "updated_at"
                         ]
                     ]
+                ]);
+    }
+
+    public function testLogOut()
+    {
+        Sanctum::actingAs(
+            User::factory()->create(),
+            ['*']
+        );
+
+        $this->json("POST", 'api/v1/admins/logout', [], ['Accept' => 'application/json'])
+                ->assertStatus(200)
+                ->assertJsonStructure([
+                    "status",
+                    "message",
+                    "data"
                 ]);
     }
 }

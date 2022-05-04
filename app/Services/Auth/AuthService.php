@@ -17,7 +17,7 @@ class AuthService extends Service
         $this->userService = $userService;
     }
 
-    public function validateCredentials(string $email, string $role)
+    public function validateCredentials(string $email, string $role = "admin")
     {
         try {
             $user = $this->userService->show(['email' => $email], $role);

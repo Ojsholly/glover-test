@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\LoginRequest;
+use App\Http\Resources\User\UserResource;
 use App\Services\Auth\AuthService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -37,5 +39,25 @@ class AuthController extends Controller
         }
 
         return response()->success([], 'Email account verified successfully.');
+    }
+
+    /**
+     * @param LoginRequest $request
+     * @return mixed
+     */
+    public function login(LoginRequest $request)
+    {
+        $user = $this->authService->validateCredentials($request->email, $request->role);
+
+        if (!$user){
+            return response()->error("The provided credentials are incorrect.");
+        }
+
+        $response = [
+          'token' => $user->createToken($request->ip())->plainTextToken,
+          'user' => new UserResource($user)
+        ];
+
+        return response()->success($response, "Login Successful.");
     }
 }

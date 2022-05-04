@@ -1,6 +1,9 @@
 <?php
 
-use App\Http\Controllers\API\v1\AdminController;
+use App\Http\Controllers\API\v1\{
+    AdminController,
+    AuthController
+};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +24,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function (){
     Route::apiResource('admins', AdminController::class)->only('store');
+
+    Route::prefix('admins')->group(function (){
+        Route::post('login', [AuthController::class, 'login']);
+    });
+
+
 });
+
+
 
 

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Update\CreateUpdateRequest;
 use App\Http\Resources\Update\UpdateResourceCollection;
 use App\Services\Update\UpdateService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Throwable;
 
 class UpdateController extends Controller
@@ -20,9 +23,9 @@ class UpdateController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         try {
             $updates = $this->updateService->findAll(['confirmed_at' => null, 'confirmed_by' => null], request()->query());
@@ -38,10 +41,10 @@ class UpdateController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CreateUpdateRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(CreateUpdateRequest $request): JsonResponse
     {
         //
     }
@@ -50,7 +53,7 @@ class UpdateController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -62,7 +65,7 @@ class UpdateController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -73,7 +76,7 @@ class UpdateController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {

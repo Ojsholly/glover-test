@@ -30,7 +30,7 @@ Route::prefix('v1')->group(function (){
             Route::post('logout', 'logout')->middleware('auth:sanctum');
         });
 
-        Route::middleware('auth:sanctum')->group(function (){
+        Route::middleware('auth:sanctum')->middleware('role:admin')->group(function (){
 
             Route::apiResource('updates', UpdateController::class);
         });

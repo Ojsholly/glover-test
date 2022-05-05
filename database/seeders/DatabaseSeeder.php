@@ -21,10 +21,12 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
         );
 
+        \App\Models\User::factory(30)->create();
+
         $this->call(
             UpdateSeeder::class
         );
 
-        \App\Models\User::factory(30)->create();
+
     }
 }

@@ -23,7 +23,7 @@ class AdminService extends Service
      * @return mixed
      * @throws Throwable
      */
-    public function register(array $data)
+    public function register(array $data): mixed
     {
         return $this->userService->store($data, 'admin');
     }

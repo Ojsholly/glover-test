@@ -46,4 +46,31 @@ class UserService extends Service
 
         return $user;
     }
+
+    /**
+     * @param array $data
+     * @param string $id
+     * @return mixed
+     * @throws Throwable
+     */
+    public function update(array $data, string $id): mixed
+    {
+        $user = $this->show(['uuid' => $id]);
+
+        $user->update($data);
+
+        return $user;
+    }
+
+    /**
+     * @param string $id
+     * @return mixed
+     * @throws Throwable
+     */
+    public function delete(string $id): mixed
+    {
+        $user = $this->show(['uuid' => $id]);
+
+        return $user->delete();
+    }
 }

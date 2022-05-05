@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\NewUpdateRequestedEvent;
+use App\Events\UpdateApprovedEvent;
 use BinaryCabin\LaravelUUID\Traits\HasUUID;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,12 @@ class Update extends Model
             $update->load(['user', 'confirmer', 'requester']);
 
             NewUpdateRequestedEvent::dispatch($update);
+        });
+
+        static::updated(function (Update $update){
+            $update->load(['user', 'confirmer', 'requester']);
+
+            UpdateApprovedEvent::dispatch($update);
         });
     }
 

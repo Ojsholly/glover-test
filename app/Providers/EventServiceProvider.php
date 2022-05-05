@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Events\NewUpdateRequestedEvent;
+use App\Events\UpdateApprovedEvent;
+use App\Listeners\ImplementUpdateApprovalListener;
 use App\Listeners\SendUpdateCreationNotificationListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         NewUpdateRequestedEvent::class => [
           SendUpdateCreationNotificationListener::class,
+        ],
+        UpdateApprovedEvent::class => [
+          ImplementUpdateApprovalListener::class,
         ],
     ];
 

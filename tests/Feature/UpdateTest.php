@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Events\NewUpdateRequestedEvent;
 use App\Models\Update;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -98,6 +98,12 @@ class UpdateTest extends TestCase
             'details' => $user->only(['first_name', 'last_name', 'email'])
         ];
 
+
+        Event::fake([
+            NewUpdateRequestedEvent::class,
+        ]);
+
+
         $this->json("POST", 'api/v1/admins/updates', $data, ['Accept' => 'application/json'])
                 ->assertStatus(201)
                 ->assertJsonStructure([
@@ -115,5 +121,7 @@ class UpdateTest extends TestCase
                         "updated_at"
                     ]
                 ]);
+
+        Event::assertDispatched(NewUpdateRequestedEvent::class);
     }
 }

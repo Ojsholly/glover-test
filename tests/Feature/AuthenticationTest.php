@@ -64,6 +64,7 @@ class AuthenticationTest extends TestCase
                     "uuid",
                     "first_name",
                     "last_name",
+                    'reference',
                     "email",
                     "email_verified_at",
                     "created_at",

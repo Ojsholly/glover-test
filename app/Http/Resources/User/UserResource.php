@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'uuid' => $this->uuid,
             'first_name' => Str::ucfirst($this->first_name),
             'last_name' => Str::ucfirst($this->last_name),
+            'reference' => Str::ucfirst($this->reference),
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at?->toDayDateTimeString(),
             'created_at' => $this->created_at->toDayDateTimeString(),

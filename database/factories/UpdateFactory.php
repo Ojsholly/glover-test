@@ -19,11 +19,12 @@ class UpdateFactory extends Factory
 
         $user = User::role('user')->get()->random();
         $admin = User::role('admin')->get()->random();
+        $count = count($updateTypes);
 
         return [
             'user_id' => $user->uuid,
             'requested_by' => $admin->uuid,
-            'type' => $updateTypes[mt_rand(0, 2)],
+            'type' => $updateTypes[mt_rand(0, $count - 1)],
             'details' => $user->only(['first_name', 'last_name', 'email']),
             'confirmed_by' => null,
             'confirmed_at' => null,

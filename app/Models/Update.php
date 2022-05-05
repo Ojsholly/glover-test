@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use BinaryCabin\LaravelUUID\Traits\HasUUID;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Prunable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Update extends Model
 {
-    use HasFactory, Prunable, HasUUID;
+    use HasFactory, HasUUID;
 
     public const CREATE = "Create";
     public const UPDATE = "Update";
@@ -26,13 +25,23 @@ class Update extends Model
       'rejected_at' => 'datetime'
     ];
 
-    /**
-     * Get the prunable model query.
-     *
-     * @return Builder
-     */
-    public function prunable(): Builder
+    public function user(): BelongsTo
     {
-        return static::where('created_at', '<=', now()->subMonth())->whereNotNull('confirmed_at');
+        return $this->belongsTo(User::class, 'user_id', 'uuid');
+    }
+
+    public function confirmer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'confirmed_by', 'uuid');
+    }
+
+    public function requester(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requested_by', 'uuid');
+    }
+
+    public function confirmed(): bool
+    {
+        return (bool) $this->confirmed_at;
     }
 }

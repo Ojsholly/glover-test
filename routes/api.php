@@ -1,9 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\v1\{
-    AdminController,
-    AuthController
-};
+use App\Http\Controllers\API\v1\{AdminController, AuthController, UpdateController};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +28,11 @@ Route::prefix('v1')->group(function (){
 
             Route::post('login', 'login');
             Route::post('logout', 'logout')->middleware('auth:sanctum');
+        });
+
+        Route::middleware('auth:sanctum')->group(function (){
+
+            Route::apiResource('updates', UpdateController::class);
         });
     });
 

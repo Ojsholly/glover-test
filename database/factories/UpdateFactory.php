@@ -27,7 +27,7 @@ class UpdateFactory extends Factory
             'type' => $updateTypes[mt_rand(0, $count - 1)],
             'details' => $user->only(['first_name', 'last_name', 'email']),
             'confirmed_by' => null,
-            'confirmed_at' => null,
+            'confirmed_at' => null
         ];
     }
 }

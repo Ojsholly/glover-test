@@ -129,6 +129,24 @@ class UpdateTest extends TestCase
         Event::assertDispatched(NewUpdateRequestedEvent::class);
     }
 
+    public function testUpdateApproval()
+    {
+        Sanctum::actingAs(
+            User::role('admin')->get()->random(),
+            ['*']
+        );
+
+        $update = Update::where('confirmed_at', null)->where('confirmed_by', null)->get()->random();
+
+        $this->json("POST", "api/v1/admins/updates/$update->uuid/confirm", [], ['Accept' => 'application/json'])
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                "status",
+                "message",
+                "data"
+            ]);
+    }
+
     public function testApprovalOfUpdateRequestAuthorization()
     {
         Sanctum::actingAs(
@@ -138,6 +156,38 @@ class UpdateTest extends TestCase
 
         $this->json("POST", 'api/v1/admins/updates/'. Str::uuid()."/confirm", ['Accept' => 'application/json'])
             ->assertStatus(403)
+            ->assertJsonStructure([
+                "status",
+                "message"
+            ]);
+    }
+
+    public function testDeclineOfUpdateRequestAuthorization()
+    {
+        Sanctum::actingAs(
+            User::role('user')->get()->random(),
+            ['*']
+        );
+
+        $this->json("POST", 'api/v1/admins/updates/'. Str::uuid()."/decline", ['Accept' => 'application/json'])
+            ->assertStatus(403)
+            ->assertJsonStructure([
+                "status",
+                "message"
+            ]);
+    }
+
+    public function testDeclineOfUpdateApproval()
+    {
+        Sanctum::actingAs(
+            User::role('admin')->get()->random(),
+            ['*']
+        );
+
+        $update = Update::where('confirmed_at', null)->where('confirmed_by', null)->get()->random();
+
+        $this->json("POST", "api/v1/admins/updates/$update->uuid/decline", [], ['Accept' => 'application/json'])
+            ->assertStatus(200)
             ->assertJsonStructure([
                 "status",
                 "message"

@@ -53,8 +53,9 @@ class UpdateService extends Service
     public function find(string $id): mixed
     {
         $update = Update::findByUuid($id);
-        throw_if(!$update, new ModelNotFoundException("Requested update not found."));
-        throw_if($update->confirmed(), new AuthorizationException("Update previously approved already."));
+        throw_if(!$update, new ModelNotFoundException("Requested update not found.", 404));
+        throw_if($update->confirmed(), new AuthorizationException("Update previously approved already.", 403));
+
         return $update;
     }
 
@@ -70,5 +71,17 @@ class UpdateService extends Service
         $update->update($data);
 
         return $update;
+    }
+
+    /**
+     * @param string $id
+     * @return mixed
+     * @throws Throwable
+     */
+    public function delete(string $id): mixed
+    {
+        $update = $this->find($id);
+
+        return $update->delete();
     }
 }

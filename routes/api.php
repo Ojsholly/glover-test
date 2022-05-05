@@ -1,6 +1,12 @@
 <?php
 
-use App\Http\Controllers\API\v1\{AdminController, AuthController, ConfirmUpdateRequestController, UpdateController};
+use App\Http\Controllers\API\v1\{
+    AdminController,
+    AuthController,
+    ConfirmUpdateRequestController,
+    DeclineUpdateRequestController,
+    UpdateController
+};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,8 +39,9 @@ Route::prefix('v1')->group(function (){
         Route::middleware('auth:sanctum')->middleware('role:admin')->group(function (){
 
             Route::post('updates/{id}/confirm', ConfirmUpdateRequestController::class);
+            Route::post('updates/{id}/decline', DeclineUpdateRequestController::class);
 
-            Route::apiResource('updates', UpdateController::class);
+            Route::apiResource('updates', UpdateController::class)->only('index', 'store');
         });
     });
 

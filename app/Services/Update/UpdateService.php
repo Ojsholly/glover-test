@@ -31,4 +31,13 @@ class UpdateService extends Service
 
         return $updates->get();
     }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public function store(array $data): mixed
+    {
+        return Update::create($data);
+    }
 }

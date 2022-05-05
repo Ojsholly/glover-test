@@ -4,11 +4,13 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Update\CreateUpdateRequest;
+use App\Http\Resources\Update\UpdateResource;
 use App\Http\Resources\Update\UpdateResourceCollection;
 use App\Services\Update\UpdateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class UpdateController extends Controller
@@ -46,7 +48,19 @@ class UpdateController extends Controller
      */
     public function store(CreateUpdateRequest $request): JsonResponse
     {
-        //
+        try {
+            $update = DB::transaction(function () use ($request){
+                return $this->updateService->store($request->validated());
+            });
+
+            $update->load(['user', 'requester']);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->error('Error creating update request.');
+        }
+
+        return response()->success(new UpdateResource($update), "Update request created successfully.", 201);
     }
 
     /**

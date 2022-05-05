@@ -16,7 +16,7 @@ class Update extends Model
     public const DELETE = "Delete";
 
     protected $fillable = [
-
+        'user_id', 'requested_by', 'type', 'details', 'confirmed_by', 'confirmed_at'
     ];
 
     protected $casts = [

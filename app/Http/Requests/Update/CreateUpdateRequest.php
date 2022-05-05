@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Update;
 
+use App\Models\Update;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateUpdateRequest extends FormRequest
@@ -13,7 +14,7 @@ class CreateUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,11 @@ class CreateUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'user_id' => ['required', 'uuid', 'exists:users,uuid'],
+            'requested_by' => ['required', 'uuid', 'exists:users,uuid'],
+            'type' => ['required', 'in:'.Update::CREATE.','.Update::UPDATE.','.Update::DELETE,'string'],
+            'details' => ['required_unless:type,'.Update::DELETE,'array'],
+            'details.*' => ['string']
         ];
     }
 }

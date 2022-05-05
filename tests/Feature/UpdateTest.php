@@ -63,7 +63,11 @@ class UpdateTest extends TestCase
         );
 
         $this->json("POST", 'api/v1/admins/updates', [], ['Accept' => 'application/json'])
-            ->assertStatus(403);
+            ->assertStatus(403)
+            ->assertJsonStructure([
+                "status",
+                "message"
+            ]);
     }
 
     public function testRequiredFieldsForUpdateCreation()

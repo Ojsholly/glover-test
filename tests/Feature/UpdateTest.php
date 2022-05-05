@@ -36,4 +36,20 @@ class UpdateTest extends TestCase
             "message"
         ]);
     }
+
+    public function testPendingUpdateList()
+    {
+        Sanctum::actingAs(
+            User::role('admin')->get()->random(),
+            ['*']
+        );
+
+        $this->json("GET", 'api/v1/admins/updates', [], ['Accept' => 'application/json'])
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                "status",
+                "message",
+                "data"
+            ]);
+    }
 }

@@ -27,6 +27,8 @@ class Update extends Model
 
     protected $with = ['user', 'confirmer', 'requester'];
 
+
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'uuid');

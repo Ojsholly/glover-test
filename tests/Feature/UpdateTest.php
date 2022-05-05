@@ -6,6 +6,7 @@ use App\Events\NewUpdateRequestedEvent;
 use App\Models\Update;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -90,7 +91,6 @@ class UpdateTest extends TestCase
         $admin = User::role('admin')->get()->random();
         $count = count($updateTypes);
 
-
         $data = [
           'user_id' => $user->uuid,
             'requested_by' => $admin->uuid,
@@ -123,5 +123,20 @@ class UpdateTest extends TestCase
                 ]);
 
         Event::assertDispatched(NewUpdateRequestedEvent::class);
+    }
+
+    public function testApprovalOfUpdateRequestAuthorization()
+    {
+        Sanctum::actingAs(
+            User::role('user')->get()->random(),
+            ['*']
+        );
+
+        $this->json("POST", 'api/v1/admins/updates/'. Str::uuid()."/confirm", ['Accept' => 'application/json'])
+            ->assertStatus(403)
+            ->assertJsonStructure([
+                "status",
+                "message"
+            ]);
     }
 }

@@ -7,6 +7,7 @@ use App\Services\Service;
 use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
 use Throwable;
 
 class UserService extends Service
@@ -17,9 +18,9 @@ class UserService extends Service
      * @return mixed
      * @throws Throwable
      */
-    public function store(array $data, string $role = 'user')
+    public function store(array $data, string $role = 'user'): mixed
     {
-        $user = User::create($data);
+        $user = User::create($data + ['reference' => Str::random(10)]);
 
         throw_if(!$user, new Exception("Error creating account.", 500));
 
@@ -44,5 +45,32 @@ class UserService extends Service
         throw_if(!$user, new ModelNotFoundException("Requested user account not found"));
 
         return $user;
+    }
+
+    /**
+     * @param array $data
+     * @param string $id
+     * @return mixed
+     * @throws Throwable
+     */
+    public function update(array $data, string $id): mixed
+    {
+        $user = $this->show(['uuid' => $id]);
+
+        $user->update($data);
+
+        return $user;
+    }
+
+    /**
+     * @param string $id
+     * @return mixed
+     * @throws Throwable
+     */
+    public function delete(string $id): mixed
+    {
+        $user = $this->show(['uuid' => $id]);
+
+        return $user->delete();
     }
 }

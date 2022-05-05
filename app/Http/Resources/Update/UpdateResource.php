@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\User;
+namespace App\Http\Resources\Update;
 
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
 
-class UserResource extends JsonResource
+class UpdateResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,11 +18,12 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
-            'first_name' => Str::ucfirst($this->first_name),
-            'last_name' => Str::ucfirst($this->last_name),
-            'reference' => Str::ucfirst($this->reference),
-            'email' => $this->email,
-            'email_verified_at' => $this->email_verified_at?->toDayDateTimeString(),
+            'user' => new UserResource($this->whenLoaded('user')),
+            'requested_by' => new UserResource($this->whenLoaded('requester')),
+            'type' =>$this->type,
+            'details' => $this->details,
+            'confirmed_by' => new UserResource($this->whenLoaded('confirmer')),
+            'confirmed_at' => $this->confirmed_at?->toDayDateTimeString(),
             'created_at' => $this->created_at->toDayDateTimeString(),
             'updated_at' => $this->updated_at->toDayDateTimeString()
         ];

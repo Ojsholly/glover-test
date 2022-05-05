@@ -64,6 +64,7 @@ class AuthenticationTest extends TestCase
                     "uuid",
                     "first_name",
                     "last_name",
+                    'reference',
                     "email",
                     "email_verified_at",
                     "created_at",
@@ -84,7 +85,7 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
 
         $credentials = ['email' => $user->email, 'password' => 'password'];
-//        dd($credentials);
+
         $this->json("POST", "api/v1/admins/login", $credentials, ['Accept' => 'application/json'])
                 ->assertStatus(200)
                 ->assertJsonStructure([

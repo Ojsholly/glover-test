@@ -4,8 +4,12 @@ namespace App\Services\Update;
 
 use App\Models\Update;
 use App\Services\Service;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Throwable;
 
 class UpdateService extends Service
 {
@@ -39,5 +43,32 @@ class UpdateService extends Service
     public function store(array $data): mixed
     {
         return Update::create($data);
+    }
+
+    /**
+     * @param string $id
+     * @return mixed
+     * @throws Throwable
+     */
+    public function find(string $id): mixed
+    {
+        $update = Update::findByUuid($id);
+        throw_if(!$update, new ModelNotFoundException("Requested update not found."));
+        throw_if($update->confirmed(), new AuthorizationException("Update previously approved already."));
+        return $update;
+    }
+
+    /**
+     * @param array $data
+     * @param string $id
+     * @return mixed
+     * @throws Throwable
+     */
+    public function update(array $data, string $id): mixed
+    {
+        $update = $this->find($id);
+        $update->update($data);
+
+        return $update;
     }
 }

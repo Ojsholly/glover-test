@@ -136,7 +136,20 @@ class UpdateTest extends TestCase
             ['*']
         );
 
-        $update = Update::where('confirmed_at', null)->where('confirmed_by', null)->get()->random();
+        $updateTypes = [Update::CREATE, Update::UPDATE, Update::DELETE];
+
+        $user = User::role('user')->get()->random();
+        $admin = User::role('admin')->get()->random();
+        $count = count($updateTypes);
+
+        $data = [
+            'user_id' => $user->uuid,
+            'requested_by' => $admin->uuid,
+            'type' => $updateTypes[mt_rand(0, $count - 1)],
+            'details' => $user->only(['first_name', 'last_name', 'email'])
+        ];
+
+        $update = Update::create($data);
 
         $this->json("POST", "api/v1/admins/updates/$update->uuid/confirm", [], ['Accept' => 'application/json'])
             ->assertStatus(200)
